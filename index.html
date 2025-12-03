@@ -2,479 +2,337 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karabük TV - Canlı Yayın</title>
-    <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Karabük TV - Dijital Yayın Platformu</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Teko:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-color: #dc2626; /* Koyu Endüstriyel Kırmızı */
+            --bg-dark: #020617; /* Gece Mavisi/Siyah */
+            --glass-bg: rgba(15, 23, 42, 0.85); /* Kurumsal Panel Rengi */
+            --border-light: rgba(255, 255, 255, 0.08);
         }
 
+        /* --- SAYFA YAPISI --- */
         html, body {
-            height: 100%;
-            overflow: hidden;
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            overflow: hidden; /* Scroll Yok */
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #0a0e27;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        /* --- ARKA PLAN --- */
+        .bg-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://baskanprofil.com/assets/images/proje/13098-3.jpg') no-repeat center center;
+            background-size: cover;
+            filter: grayscale(100%) brightness(0.3);
             z-index: 0;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            transition: transform 20s ease;
+        }
+        
+        /* Izgara Doku */
+        .grid-texture {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 1;
         }
 
-        .bg-animation::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(243, 156, 18, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(52, 152, 219, 0.05) 0%, transparent 50%);
-            animation: moveBackground 20s ease-in-out infinite;
+        /* --- ANA MERKEZ --- */
+        .main-wrapper {
+            position: relative; z-index: 10;
+            height: 100%; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px;
         }
 
-        @keyframes moveBackground {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-50px, -50px); }
-        }
-
-        /* Header - Küçültüldü */
-        header {
-            position: relative;
-            z-index: 100;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.6rem 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-            flex-shrink: 0;
-        }
-
-        .header-content {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-        }
-
-        .logo-icon {
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
-        }
-
-        .logo-text h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 0.6rem;
-        }
-
-        .social-icons a {
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.75rem;
-        }
-
-        .social-icons a:hover {
-            background: rgba(243, 156, 18, 0.2);
-            border-color: #f39c12;
-            transform: translateY(-3px);
-        }
-
-        /* Main Container */
-        .main-container {
-            position: relative;
-            z-index: 10;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 1600px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0.8rem 1.5rem;
-        }
-
-        /* Construction Notice - Küçültüldü */
-        .construction-notice {
-            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(52, 152, 219, 0.1) 100%);
-            border-radius: 12px;
-            padding: 0.8rem 1.2rem;
-            text-align: center;
-            border: 1px solid rgba(243, 156, 18, 0.2);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            margin-bottom: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .construction-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.3rem;
-            animation: rotate 3s linear infinite;
-            display: inline-block;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .construction-notice h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: inline;
-        }
-
-        .construction-notice p {
-            font-size: 0.85rem;
-            line-height: 1.4;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* Video Section - Büyütüldü */
-        .video-section {
-            background: rgba(255, 255, 255, 0.02);
+        /* --- CAM PANEL --- */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
+            padding: 40px;
+            width: 100%; max-width: 1100px;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 50px;
+            align-items: center;
         }
 
-        .video-container {
-            flex: 1;
-            position: relative;
-            background: #000;
+        /* --- SOL TARAF --- */
+        .info-col { text-align: left; }
+
+        .brand-header {
+            font-family: 'Teko', sans-serif;
+            font-size: clamp(3rem, 4vw, 4.5rem);
+            line-height: 0.9; margin-bottom: 15px;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: #fff;
+        }
+        .brand-header span { color: var(--primary-color); }
+
+        .slogan-bar {
+            font-size: 0.8rem; letter-spacing: 4px; color: #94a3b8;
+            text-transform: uppercase; margin-bottom: 30px;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 15px; display: block;
         }
 
-        .video-js {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .desc-text {
+            color: #cbd5e1; font-size: 1rem; line-height: 1.6; 
+            margin-bottom: 30px; font-weight: 300; opacity: 0.9;
         }
 
-        .video-bottom-text {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 0.6rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 15px; border-radius: 6px;
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 0.8rem; font-weight: 600; color: #e2e8f0;
+        }
+        .pulse-dot { width: 8px; height: 8px; background: #eab308; border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .btn-business {
+            margin-top: 30px;
+            padding: 14px 40px; background: #fff; color: #0f172a;
+            font-weight: 700; text-decoration: none; border-radius: 4px;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.3s ease; text-transform: uppercase; font-size: 0.9rem;
+        }
+        .btn-business:hover {
+            background: #cbd5e1; transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .video-bottom-text p {
-            font-size: 0.9rem;
-            color: #f39c12;
-            font-weight: 600;
+        /* --- SAĞ TARAF --- */
+        .video-col { width: 100%; }
+
+        .video-frame {
+            position: relative; border-radius: 8px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: #000; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            aspect-ratio: 16/9;
         }
 
-        /* Footer - Küçültüldü */
-        footer {
-            position: relative;
-            z-index: 10;
-            background: rgba(10, 14, 39, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.6rem 1.5rem;
-            text-align: center;
-            flex-shrink: 0;
+        .live-tag {
+            position: absolute; top: 15px; left: 15px;
+            background: var(--primary-color); color: white;
+            padding: 4px 10px; border-radius: 4px;
+            font-size: 0.7rem; font-weight: 700; z-index: 20; letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+            display: flex; align-items: center; gap: 6px;
         }
 
-        footer p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.75rem;
+        /* --- POPUP --- */
+        .modal-content {
+            background-color: #1e293b; border: 1px solid rgba(255,255,255,0.1);
+            color: white; border-radius: 12px;
+        }
+        .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px; }
+        .modal-footer { border-top: 1px solid rgba(255,255,255,0.1); }
+        .form-control {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 12px;
+        }
+        .form-control:focus {
+            background: rgba(0,0,0,0.4); border-color: var(--primary-color);
+            color: white; box-shadow: none;
+        }
+        
+        .security-field { display: none; visibility: hidden; }
+
+        .captcha-box {
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 6px;
+            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Video.js Custom Styling */
-        .vjs-big-play-button {
-            border: none !important;
-            background: rgba(243, 156, 18, 0.9) !important;
-            border-radius: 50% !important;
-            width: 80px !important;
-            height: 80px !important;
-            line-height: 80px !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-        }
-
-        .vjs-big-play-button:hover {
-            background: rgba(243, 156, 18, 1) !important;
-        }
-
-        .video-js .vjs-control-bar {
-            background: rgba(0, 0, 0, 0.7) !important;
-            backdrop-filter: blur(10px);
-        }
-
-        .video-js .vjs-play-progress {
-            background-color: #f39c12 !important;
-        }
-
-        .video-js .vjs-volume-level {
-            background-color: #f39c12 !important;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header {
-                padding: 0.5rem 0;
-            }
-
-            .header-content {
-                padding: 0 1rem;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .logo-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 0.9rem;
-            }
-
-            .logo-text h1 {
-                font-size: 1rem;
-            }
-
-            .social-icons a {
-                width: 28px;
-                height: 28px;
-                font-size: 0.7rem;
-            }
-
-            .main-container {
-                padding: 0.6rem 1rem;
-            }
-
-            .construction-notice {
-                padding: 0.6rem 1rem;
-                margin-bottom: 0.6rem;
-            }
-
-            .construction-icon {
-                font-size: 1.2rem;
-                margin-bottom: 0.2rem;
-            }
-
-            .construction-notice h2 {
-                font-size: 1rem;
-                margin-bottom: 0.2rem;
-            }
-
-            .construction-notice p {
-                font-size: 0.75rem;
-                line-height: 1.3;
-            }
-
-            .video-bottom-text {
-                padding: 0.5rem;
-            }
-
-            .video-bottom-text p {
-                font-size: 0.75rem;
-            }
-
-            footer {
-                padding: 0.5rem 1rem;
-            }
-
-            footer p {
-                font-size: 0.7rem;
-            }
-
-            .vjs-big-play-button {
-                width: 60px !important;
-                height: 60px !important;
-                line-height: 60px !important;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo-text h1 {
-                font-size: 0.9rem;
-            }
-
-            .construction-notice h2 {
-                font-size: 0.9rem;
-            }
-
-            .construction-notice p {
-                font-size: 0.7rem;
-            }
-
-            .video-bottom-text p {
-                font-size: 0.7rem;
-            }
+        @media (max-width: 992px) {
+            .glass-card { grid-template-columns: 1fr; padding: 30px 20px; gap: 30px; max-height: 90vh; overflow-y: auto; text-align: center; }
+            .info-col { order: 2; }
+            .video-col { order: 1; }
+            .slogan-bar { border-left: none; border-bottom: 3px solid var(--primary-color); padding-left: 0; padding-bottom: 5px; }
+            html, body { overflow-y: auto; }
+            .main-wrapper { padding-top: 50px; }
         }
     </style>
 </head>
 <body>
-    <!-- Background Animation -->
-    <div class="bg-animation"></div>
 
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-tv"></i>
+    <div class="bg-layer"></div>
+    <div class="grid-texture"></div>
+
+    <div class="main-wrapper">
+        <div class="glass-card">
+            
+            <div class="info-col">
+                <div class="brand-header">KARABÜK<span>TV</span></div>
+                <div class="slogan-bar">EMEĞİN BAŞKENTİNDEN DÜNYAYA</div>
+                
+                <p class="desc-text">
+                    Karabük'ün dünyaya açılan penceresi yenileniyor. 
+                    En yeni teknolojilerle donatılmış dijital yayın platformumuz çok yakında yayında olacak. 
+                    Kesintisiz yayınımızı izlemeye devam edebilirsiniz.
+                </p>
+
+                <div class="status-indicator">
+                    <div class="pulse-dot"></div>
+                    SİSTEM BAKIMDA | YAYIN AKTİF
                 </div>
-                <div class="logo-text">
-                    <h1>KARABÜK TV</h1>
+
+                <div class="mt-2">
+                    <a href="#" class="btn-business" data-bs-toggle="modal" data-bs-target="#contactModal">
+                        <i class="fas fa-paper-plane"></i> YÖNETİME ULAŞIN
+                    </a>
                 </div>
             </div>
-            <div class="social-icons">
-                <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-            </div>
-        </div>
-    </header>
 
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- Construction Notice -->
-        <div class="construction-notice">
-            <span class="construction-icon">⚙️</span>
-            <h2>Web Sitemiz Yapım Aşamasında</h2>
-            <p>Yeni nesil web sitemiz üzerinde çalışıyoruz. Çok yakında modern tasarımımız, zengin içeriklerimiz ve interaktif özelliklerimizle hizmetinizdeyiz.</p>
-        </div>
-
-        <!-- Video Section -->
-        <div class="video-section">
-            <div class="video-container">
-                <video
-                    id="my-video"
-                    class="video-js vjs-default-skin vjs-big-play-centered"
-                    controls
-                    preload="auto"
-                    data-setup='{}'>
-                </video>
+            <div class="video-col">
+                <div class="video-frame">
+                    <div class="live-tag"><i class="fas fa-circle fa-xs text-white"></i> CANLI</div>
+                    <video id="player" playsinline controls crossorigin 
+                           poster="https://via.placeholder.com/1920x1080/0f172a/ffffff?text=KARABUK+TV+YAYIN">
+                        </video>
+                </div>
+                <div class="d-none d-lg-flex justify-content-between mt-3 text-white-50" style="font-size: 0.75rem; letter-spacing: 1px;">
+                    <span><i class="fas fa-server me-2"></i> AZURE MEDIA SERVICES</span>
+                    <span>SECURE STREAM <i class="fas fa-lock ms-1"></i></span>
+                </div>
             </div>
-            <div class="video-bottom-text">
-                <p>Şimdilik Karabük TV canlı yayınımızı kesintisiz olarak izleyebilirsiniz.</p>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-family:'Teko', sans-serif; font-size:1.6rem;">KURUMSAL İLETİŞİM</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <form id="contactForm" action="https://formspree.io/f/mqarbwoo" method="POST" onsubmit="validateAndSend(event)">
+                        
+                        <input type="text" name="_gotcha" style="display:none !important;">
+
+                        <div class="security-field">
+                            <label>Bunu boş bırakın:</label>
+                            <input type="text" id="honeypot" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">ADINIZ SOYADINIZ</label>
+                            <input type="text" name="ad_soyad" class="form-control" required placeholder="Adınız">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">E-POSTA ADRESİNİZ</label>
+                            <input type="email" name="email" class="form-control" required placeholder="mail@ornek.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">MESAJINIZ</label>
+                            <textarea name="mesaj" class="form-control" rows="4" required placeholder="İletmek istediğiniz konu..."></textarea>
+                        </div>
+
+                        <div class="captcha-box">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="text-warning small fw-bold"><i class="fas fa-shield-alt me-1"></i> GÜVENLİK KONTROLÜ</label>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-white border-secondary" id="math-question">3 + 5 = ?</span>
+                                <input type="number" id="captcha-answer" class="form-control" required placeholder="Sonucu yazın">
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-danger py-3 fw-bold">
+                                <i class="fas fa-paper-plane me-2"></i> GÖNDER
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Karabük TV - Tüm Hakları Saklıdır</p>
-    </footer>
-
-    <!-- Video.js -->
-    <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@videojs/http-streaming@3.5.3/dist/videojs-http-streaming.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     
     <script>
-        // Initialize Video.js player
-        var player = videojs('my-video', {
-            controls: true,
-            autoplay: true,
-            muted: true,
-            preload: 'auto',
-            fluid: false,
-            fill: true,
-            liveui: true,
-            html5: {
-                vhs: {
-                    overrideNative: true,
-                    enableLowInitialPlaylist: true,
-                },
-                nativeAudioTracks: false,
-                nativeVideoTracks: false
+        // --- SPAM KORUMA MANTIĞI ---
+        let n1, n2;
+
+        const modalEl = document.getElementById('contactModal');
+        modalEl.addEventListener('show.bs.modal', function () {
+            n1 = Math.floor(Math.random() * 10) + 1;
+            n2 = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('math-question').textContent = `${n1} + ${n2} = ?`;
+            document.getElementById('captcha-answer').value = '';
+        });
+
+        function validateAndSend(e) {
+            e.preventDefault(); // Önce otomatik göndermeyi durdur
+            
+            // 1. KONTROL: Honeypot
+            const honeypot = document.getElementById('honeypot').value;
+            if (honeypot !== "") {
+                console.log("Bot detected!");
+                return;
             }
-        });
 
-        // Set source
-        player.src({
-            src: 'https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8',
-            type: 'application/x-mpegURL'
-        });
+            // 2. KONTROL: Matematik
+            const userAnswer = parseInt(document.getElementById('captcha-answer').value);
+            const correctAnswer = n1 + n2;
 
-        // Auto-play handler
-        player.ready(function() {
-            var promise = player.play();
-            if (promise !== undefined) {
-                promise.catch(function(error) {
-                    console.log('Autoplay prevented:', error);
-                    player.muted(true);
-                    player.play();
-                });
+            if (userAnswer !== correctAnswer) {
+                alert("Güvenlik sorusu hatalı! Lütfen işlemi tekrar yapınız.");
+                return;
             }
-        });
 
-        // Error handler
-        player.on('error', function() {
-            console.log('Video error occurred');
-            setTimeout(function() {
-                player.src({
-                    src: 'https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8',
-                    type: 'application/x-mpegURL'
+            // --- HER ŞEY DOĞRUYSA ---
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin me-2"></i> GÖNDERİLİYOR...';
+
+            // Formu manuel olarak gönder (Formspree'ye)
+            e.target.submit();
+        }
+
+        // --- VIDEO PLAYER ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('player');
+            const source = 'https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8';
+            
+            const defaultOptions = {
+                controls: ['play-large', 'play', 'mute', 'volume', 'fullscreen'],
+                autoplay: false,
+                hideControls: true
+            };
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(source);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                    const player = new Plyr(video, defaultOptions);
                 });
-            }, 3000);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source;
+                const player = new Plyr(video, defaultOptions);
+            }
         });
     </script>
+
 </body>
-
 </html>
-
