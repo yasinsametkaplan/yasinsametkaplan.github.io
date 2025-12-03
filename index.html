@@ -3,213 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Karabük TV - Dijital Yayın Platformu</title>
+    <title>Karabük TV - Yapım Aşamasında</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Teko:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-color: #dc2626; /* Koyu Endüstriyel Kırmızı */
-            --bg-dark: #020617; /* Gece Mavisi/Siyah */
-            --glass-bg: rgba(15, 23, 42, 0.85); /* Kurumsal Panel Rengi */
-            --border-light: rgba(255, 255, 255, 0.08);
+            --brand-red: #e11d48;
+            --bg-deep: #020617;
+            --glass-panel: rgba(15, 23, 42, 0.90);
+            --border-tech: rgba(255, 255, 255, 0.15);
         }
 
-        /* --- SAYFA YAPISI --- */
-        html, body {
-            height: 100%; width: 100%; margin: 0; padding: 0;
-            overflow: hidden; /* Scroll Yok */
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
+        /* --- MAVİ RENK İMHASI (ANTI-BLUE CSS) --- */
+        
+        /* 1. Tüm odaklanma çerçevelerini kırmızı yap */
+        *:focus, *:focus-visible {
+            outline: none !important;
+            box-shadow: 0 0 0 2px var(--brand-red) !important;
+            border-color: var(--brand-red) !important;
+        }
+
+        /* 2. Metin seçme rengini kırmızı yap */
+        ::selection {
+            background-color: var(--brand-red);
             color: #ffffff;
         }
 
-        /* --- ARKA PLAN --- */
-        .bg-layer {
+        /* 3. Bootstrap form focus override */
+        .form-control:focus {
+            border-color: var(--brand-red) !important;
+            box-shadow: 0 0 0 0.25rem rgba(225, 29, 72, 0.25) !important;
+        }
+
+        /* 4. Linklerin varsayılan mavisini engelle */
+        a { color: #fff; text-decoration: none; }
+        a:hover { color: var(--brand-red); }
+
+        /* ----------------------------------------- */
+
+        html, body {
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: #fff;
+        }
+
+        /* ARKA PLAN */
+        .bg-studio {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://baskanprofil.com/assets/images/proje/13098-3.jpg') no-repeat center center;
             background-size: cover;
-            filter: grayscale(100%) brightness(0.3);
+            filter: grayscale(60%) brightness(0.4); 
             z-index: 0;
-            transition: transform 20s ease;
         }
-        
-        /* Izgara Doku */
-        .grid-texture {
+        .dot-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: 1;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 1; pointer-events: none;
         }
 
-        /* --- ANA MERKEZ --- */
-        .main-wrapper {
+        /* ANA KAPLAYICI */
+        .wrapper {
             position: relative; z-index: 10;
             height: 100%; width: 100%;
             display: flex; justify-content: center; align-items: center;
-            padding: 20px;
+            padding: 20px; padding-bottom: 60px;
         }
 
-        /* --- CAM PANEL --- */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border-light);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            border-radius: 16px;
-            padding: 40px;
-            width: 100%; max-width: 1100px;
+        /* ANA KART */
+        .broadcast-card {
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-tech);
+            border-top: 4px solid var(--brand-red);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.9);
+            border-radius: 8px;
+            padding: 50px;
+            width: 100%; max-width: 1200px;
             display: grid;
-            grid-template-columns: 0.9fr 1.1fr;
+            grid-template-columns: 0.9fr 1.3fr;
             gap: 50px;
             align-items: center;
+            position: relative;
+        }
+        .broadcast-card::after {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 60px; height: 60px;
+            border-bottom: 4px solid var(--brand-red);
+            border-right: 4px solid var(--brand-red);
+            border-radius: 0 0 8px 0; opacity: 0.7;
         }
 
-        /* --- SOL TARAF --- */
-        .info-col { text-align: left; }
+        /* SOL TARAF */
+        .info-panel { text-align: left; }
 
-        .brand-header {
-            font-family: 'Teko', sans-serif;
-            font-size: clamp(3rem, 4vw, 4.5rem);
-            line-height: 0.9; margin-bottom: 15px;
-            text-transform: uppercase; letter-spacing: 1px;
-            color: #fff;
+        .logo-area {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 3rem; line-height: 0.9; margin-bottom: 10px;
+            font-weight: 700; text-transform: uppercase; color: #fff;
+            display: flex; align-items: center; gap: 15px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.1);
         }
-        .brand-header span { color: var(--primary-color); }
+        .logo-area i { color: #94a3b8; font-size: 2.5rem; }
+        .logo-area span { color: var(--brand-red); }
 
-        .slogan-bar {
-            font-size: 0.8rem; letter-spacing: 4px; color: #94a3b8;
-            text-transform: uppercase; margin-bottom: 30px;
-            border-left: 3px solid var(--primary-color);
-            padding-left: 15px; display: block;
+        /* SÜSLÜ SLOGAN */
+        .main-slogan {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: inline-block;
+            background: linear-gradient(90deg, #ffffff, #e11d48, #ffffff);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 5s linear infinite;
         }
+        @keyframes shine { to { background-position: 200% center; } }
 
-        .desc-text {
-            color: #cbd5e1; font-size: 1rem; line-height: 1.6; 
-            margin-bottom: 30px; font-weight: 300; opacity: 0.9;
+        .construction-box {
+            background: rgba(225, 29, 72, 0.1);
+            border: 2px dashed rgba(225, 29, 72, 0.4);
+            padding: 20px; border-radius: 8px; margin-bottom: 25px;
+            position: relative; overflow: hidden;
         }
-
-        .status-indicator {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 15px; border-radius: 6px;
-            display: inline-flex; align-items: center; gap: 10px;
-            font-size: 0.8rem; font-weight: 600; color: #e2e8f0;
+        .box-bg-icon {
+            position: absolute; right: -20px; top: -20px;
+            font-size: 5rem; color: rgba(255,255,255,0.05);
+            transform: rotate(-20deg); pointer-events: none;
         }
-        .pulse-dot { width: 8px; height: 8px; background: #eab308; border-radius: 50%; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        .btn-business {
-            margin-top: 30px;
-            padding: 14px 40px; background: #fff; color: #0f172a;
-            font-weight: 700; text-decoration: none; border-radius: 4px;
-            display: inline-flex; align-items: center; gap: 10px;
-            transition: all 0.3s ease; text-transform: uppercase; font-size: 0.9rem;
+        .construction-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.8rem; font-weight: 700;
+            color: #fff; line-height: 1; margin-bottom: 10px;
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 10px;
+            position: relative; z-index: 2;
         }
-        .btn-business:hover {
-            background: #cbd5e1; transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
+        .construction-title i { color: #fbbf24; }
 
-        /* --- SAĞ TARAF --- */
-        .video-col { width: 100%; }
-
-        .video-frame {
-            position: relative; border-radius: 8px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: #000; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            aspect-ratio: 16/9;
-        }
-
-        .live-tag {
-            position: absolute; top: 15px; left: 15px;
-            background: var(--primary-color); color: white;
-            padding: 4px 10px; border-radius: 4px;
-            font-size: 0.7rem; font-weight: 700; z-index: 20; letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
-            display: flex; align-items: center; gap: 6px;
+        .notice-text {
+            color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin: 0; position: relative; z-index: 2;
         }
 
-        /* --- POPUP --- */
-        .modal-content {
-            background-color: #1e293b; border: 1px solid rgba(255,255,255,0.1);
-            color: white; border-radius: 12px;
+        .helper-text {
+            color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 25px;
+            display: block; line-height: 1.5;
         }
-        .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px; }
-        .modal-footer { border-top: 1px solid rgba(255,255,255,0.1); }
-        .form-control {
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 12px;
+        .helper-text i { 
+            color: var(--brand-red); margin-right: 8px; font-size: 1rem; vertical-align: middle;
         }
-        .form-control:focus {
-            background: rgba(0,0,0,0.4); border-color: var(--primary-color);
-            color: white; box-shadow: none;
+
+        .btn-action {
+            background: #fff; color: #020617;
+            padding: 12px 30px; text-decoration: none; font-weight: 700;
+            font-family: 'Rajdhani', sans-serif; text-transform: uppercase;
+            letter-spacing: 1px; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px;
+            border-radius: 4px; font-size: 0.95rem;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+        }
+        .btn-action:hover { background: var(--brand-red); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(225, 29, 72, 0.4); }
+
+        /* SAĞ TARAF: VİDEO */
+        .monitor-panel { width: 100%; }
+
+        .video-border {
+            padding: 6px; background: #1e293b;
+            border: 1px solid var(--border-tech);
+            border-radius: 6px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
         }
         
-        .security-field { display: none; visibility: hidden; }
-
-        .captcha-box {
-            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 6px;
-            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);
+        .video-box {
+            position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden;
         }
 
+        /* --- PLAYER BAR --- */
+        .plyr__controls {
+            margin: 15px !important;
+            border-radius: 8px !important;
+            background: rgba(0, 0, 0, 0.6) !important; 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 5px 15px !important;
+        }
+
+        /* YAZI YOK */
+        .plyr__controls::before { display: none; }
+
+        /* Plyr Renk */
+        .plyr__control--overlaid { 
+            background: rgba(225, 29, 72, 0.9); 
+            box-shadow: 0 0 30px rgba(225, 29, 72, 0.6);
+        }
+        .plyr--full-ui input[type=range] { color: var(--brand-red); }
+        .plyr--video .plyr__control.plyr__tab-focus,
+        .plyr--video .plyr__control:hover,
+        .plyr--video .plyr__control[aria-expanded=true] { background: var(--brand-red); }
+        .plyr__menu__container { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); }
+
+        /* Watermark */
+        .channel-watermark {
+            position: absolute; bottom: 20px; right: 25px;
+            font-family: 'Rajdhani', sans-serif; font-weight: 700;
+            color: rgba(255,255,255,0.4); font-size: 1.3rem; letter-spacing: 1px;
+            z-index: 20; pointer-events: none;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;
+        }
+        .channel-watermark span { color: rgba(225, 29, 72, 0.5); }
+
+        /* Teknik Veri */
+        .tech-stats {
+            display: flex; justify-content: space-between;
+            margin-top: 10px; font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem; color: #64748b; text-transform: uppercase;
+            background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-item { display: flex; align-items: center; gap: 8px; }
+        .stat-item i { color: #64748b; }
+        .stat-item span { color: #e2e8f0; font-weight: 700; }
+        .green-light { color: #10b981 !important; margin-right: 0; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* ALT TICKER */
+        .ticker-wrapper {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 35px;
+            background: #000; border-top: 1px solid #333;
+            display: flex; align-items: center; z-index: 50;
+        }
+        .ticker-label {
+            background: var(--brand-red); color: #fff; height: 100%;
+            display: flex; align-items: center; padding: 0 15px;
+            font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: 1px;
+            font-size: 0.85rem; z-index: 2; gap: 8px;
+        }
+        .ticker-content {
+            flex-grow: 1; color: #cbd5e1; font-size: 0.85rem;
+            font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden;
+        }
+
+        /* POPUP */
+        .modal-content { background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; }
+        .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px; }
+        .form-control { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 1rem; }
+        /* Focus rengi kırmızı */
+        .form-control:focus { border-color: var(--brand-red) !important; box-shadow: 0 0 0 0.25rem rgba(225, 29, 72, 0.25) !important; }
+        .security-field { display: none; }
+        .captcha-box { background: rgba(255,255,255,0.05); padding: 15px; border: 1px solid rgba(255,255,255,0.1); font-size: 1rem; }
+
         @media (max-width: 992px) {
-            .glass-card { grid-template-columns: 1fr; padding: 30px 20px; gap: 30px; max-height: 90vh; overflow-y: auto; text-align: center; }
-            .info-col { order: 2; }
-            .video-col { order: 1; }
-            .slogan-bar { border-left: none; border-bottom: 3px solid var(--primary-color); padding-left: 0; padding-bottom: 5px; }
+            .broadcast-card { grid-template-columns: 1fr; padding: 25px; gap: 40px; max-height: 85vh; overflow-y: auto; }
+            .info-panel { text-align: center; order: 2; }
+            .monitor-panel { order: 1; }
+            .logo-area { justify-content: center; font-size: 3rem; margin-bottom: 15px; }
+            .main-slogan { font-size: 1rem; letter-spacing: 2px; }
+            .construction-box { text-align: center; padding: 15px; }
+            .construction-title { justify-content: center; font-size: 1.5rem; }
+            .tech-stats { display: none; }
+            .ticker-label span { display: none; } 
+            .ticker-label { padding: 0 15px; }
             html, body { overflow-y: auto; }
-            .main-wrapper { padding-top: 50px; }
+            .wrapper { padding-top: 30px; display: block; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-layer"></div>
-    <div class="grid-texture"></div>
+    <div class="bg-studio"></div>
+    <div class="dot-overlay"></div>
 
-    <div class="main-wrapper">
-        <div class="glass-card">
+    <div class="wrapper">
+        <div class="broadcast-card">
             
-            <div class="info-col">
-                <div class="brand-header">KARABÜK<span>TV</span></div>
-                <div class="slogan-bar">EMEĞİN BAŞKENTİNDEN DÜNYAYA</div>
-                
-                <p class="desc-text">
-                    Karabük'ün dünyaya açılan penceresi yenileniyor. 
-                    En yeni teknolojilerle donatılmış dijital yayın platformumuz çok yakında yayında olacak. 
-                    Kesintisiz yayınımızı izlemeye devam edebilirsiniz.
-                </p>
-
-                <div class="status-indicator">
-                    <div class="pulse-dot"></div>
-                    SİSTEM BAKIMDA | YAYIN AKTİF
+            <div class="info-panel">
+                <div class="logo-area">
+                    <i class="fas fa-broadcast-tower"></i> KARABÜK<span>TV</span>
                 </div>
 
-                <div class="mt-2">
-                    <a href="#" class="btn-business" data-bs-toggle="modal" data-bs-target="#contactModal">
-                        <i class="fas fa-paper-plane"></i> YÖNETİME ULAŞIN
+                <div class="main-slogan">
+                    EMEĞİN BAŞKENTİNDEN DÜNYAYA
+                </div>
+
+                <div class="construction-box">
+                    <i class="fas fa-cogs box-bg-icon"></i>
+                    <div class="construction-title">
+                        <i class="fas fa-hard-hat"></i>
+                        YAPIM AŞAMASINDADIR
+                    </div>
+                    <p class="notice-text">
+                        <strong>Karabük'ün referans haber kaynağı, küresel yayın standartlarıyla buluşuyor.</strong><br>
+                        Dijital altyapı ve arayüz yenileme çalışmalarımız tamamlanmak üzere.
+                    </p>
+                </div>
+
+                <p class="helper-text">
+                    <i class="fas fa-info-circle"></i>
+                    Bu süreçte test yayınımızı yandaki ekrandan kesintisiz olarak izleyebilirsiniz.
+                </p>
+
+                <div>
+                    <a href="#" class="btn-action" data-bs-toggle="modal" data-bs-target="#contactModal">
+                        <i class="fas fa-envelope-open-text"></i> BİZE ULAŞIN
                     </a>
                 </div>
             </div>
 
-            <div class="video-col">
-                <div class="video-frame">
-                    <div class="live-tag"><i class="fas fa-circle fa-xs text-white"></i> CANLI</div>
-                    <video id="player" playsinline controls crossorigin 
-                           poster="https://via.placeholder.com/1920x1080/0f172a/ffffff?text=KARABUK+TV+YAYIN">
+            <div class="monitor-panel">
+                <div class="video-border">
+                    <div class="video-box">
+                        <div class="channel-watermark">
+                            <i class="fas fa-tv"></i> KARABÜK<span>TV</span>
+                        </div>
+
+                        <video id="player" playsinline controls crossorigin 
+                               poster="https://via.placeholder.com/1920x1080/0f172a/ffffff?text=KARABUK+TV+YAYIN">
                         </video>
+                    </div>
                 </div>
-                <div class="d-none d-lg-flex justify-content-between mt-3 text-white-50" style="font-size: 0.75rem; letter-spacing: 1px;">
-                    <span><i class="fas fa-server me-2"></i> AZURE MEDIA SERVICES</span>
-                    <span>SECURE STREAM <i class="fas fa-lock ms-1"></i></span>
+                
+                <div class="tech-stats">
+                    <div class="stat-item"><i class="fas fa-signal green-light"></i> YAYIN: <span>AKTİF</span></div>
+                    <div class="stat-item"><i class="fas fa-server"></i> SUNUCU: <span>ONLINE</span></div>
+                    <div class="stat-item"><i class="fas fa-cog"></i> KALİTE: <span>1080P HD</span></div>
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <div class="ticker-wrapper">
+        <div class="ticker-label">
+            <i class="fas fa-bolt"></i>
+            <span>BİLGİLENDİRME</span>
+        </div>
+        <div class="ticker-content">
+            <marquee scrollamount="5" scrolldelay="100">
+                KARABÜK TV WEB SİTESİ YAPIM AŞAMASINDADIR... YAYINLARIMIZI BU EKRANDAN KESİNTİSİZ İZLEYEBİLİRSİNİZ... REKLAM VE İŞBİRLİĞİ İÇİN BİZE ULAŞIN... EMEĞİN BAŞKENTİNDEN DÜNYAYA...
+            </marquee>
         </div>
     </div>
 
@@ -217,45 +360,44 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="font-family:'Teko', sans-serif; font-size:1.6rem;">KURUMSAL İLETİŞİM</h5>
+                    <h5 class="modal-title" style="font-family:'Rajdhani', sans-serif; font-weight:700; font-size:1.4rem;">
+                        <i class="fas fa-envelope me-2"></i> KURUMSAL İLETİŞİM
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
                 </div>
                 <div class="modal-body">
-                    
                     <form id="contactForm" action="https://formspree.io/f/mqarbwoo" method="POST" onsubmit="validateAndSend(event)">
                         
                         <input type="text" name="_gotcha" style="display:none !important;">
-
                         <div class="security-field">
-                            <label>Bunu boş bırakın:</label>
                             <input type="text" id="honeypot" tabindex="-1" autocomplete="off">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small">ADINIZ SOYADINIZ</label>
-                            <input type="text" name="ad_soyad" class="form-control" required placeholder="Adınız">
+                            <label class="small text-white-50">ADINIZ SOYADINIZ</label>
+                            <input type="text" name="ad_soyad" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small">E-POSTA ADRESİNİZ</label>
-                            <input type="email" name="email" class="form-control" required placeholder="mail@ornek.com">
+                            <label class="small text-white-50">E-POSTA</label>
+                            <input type="email" name="email" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-white-50 small">MESAJINIZ</label>
-                            <textarea name="mesaj" class="form-control" rows="4" required placeholder="İletmek istediğiniz konu..."></textarea>
+                            <label class="small text-white-50">MESAJINIZ</label>
+                            <textarea name="mesaj" class="form-control" rows="4" required></textarea>
                         </div>
 
                         <div class="captcha-box">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="text-warning small fw-bold"><i class="fas fa-shield-alt me-1"></i> GÜVENLİK KONTROLÜ</label>
+                            <div class="d-flex justify-content-between mb-1">
+                                <label class="small text-warning fw-bold"><i class="fas fa-shield-alt"></i> GÜVENLİK</label>
                             </div>
                             <div class="input-group">
-                                <span class="input-group-text bg-dark text-white border-secondary" id="math-question">3 + 5 = ?</span>
-                                <input type="number" id="captcha-answer" class="form-control" required placeholder="Sonucu yazın">
+                                <span class="input-group-text bg-dark text-white border-secondary" id="math-question"></span>
+                                <input type="number" id="captcha-answer" class="form-control" required placeholder="Sonucu girin">
                             </div>
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-danger py-3 fw-bold">
+                            <button type="submit" class="btn btn-danger fw-bold py-3">
                                 <i class="fas fa-paper-plane me-2"></i> GÖNDER
                             </button>
                         </div>
@@ -270,66 +412,62 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     
     <script>
-        // --- SPAM KORUMA MANTIĞI ---
         let n1, n2;
-
         const modalEl = document.getElementById('contactModal');
         modalEl.addEventListener('show.bs.modal', function () {
-            n1 = Math.floor(Math.random() * 10) + 1;
-            n2 = Math.floor(Math.random() * 10) + 1;
+            n1 = Math.floor(Math.random() * 9) + 1;
+            n2 = Math.floor(Math.random() * 9) + 1;
             document.getElementById('math-question').textContent = `${n1} + ${n2} = ?`;
             document.getElementById('captcha-answer').value = '';
         });
 
         function validateAndSend(e) {
-            e.preventDefault(); // Önce otomatik göndermeyi durdur
-            
-            // 1. KONTROL: Honeypot
+            e.preventDefault(); 
             const honeypot = document.getElementById('honeypot').value;
-            if (honeypot !== "") {
-                console.log("Bot detected!");
+            if (honeypot !== "") { console.log("Bot detected!"); return; }
+
+            const ans = parseInt(document.getElementById('captcha-answer').value);
+            if (ans !== (n1 + n2)) {
+                alert("Güvenlik sorusu hatalı!");
                 return;
             }
 
-            // 2. KONTROL: Matematik
-            const userAnswer = parseInt(document.getElementById('captcha-answer').value);
-            const correctAnswer = n1 + n2;
-
-            if (userAnswer !== correctAnswer) {
-                alert("Güvenlik sorusu hatalı! Lütfen işlemi tekrar yapınız.");
-                return;
-            }
-
-            // --- HER ŞEY DOĞRUYSA ---
             const btn = e.target.querySelector('button[type="submit"]');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin me-2"></i> GÖNDERİLİYOR...';
-
-            // Formu manuel olarak gönder (Formspree'ye)
+            btn.innerHTML = 'GÖNDERİLİYOR...';
             e.target.submit();
         }
 
-        // --- VIDEO PLAYER ---
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('player');
             const source = 'https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8';
             
             const defaultOptions = {
-                controls: ['play-large', 'play', 'mute', 'volume', 'fullscreen'],
-                autoplay: false,
-                hideControls: true
+                controls: ['play-large', 'play', 'mute', 'volume', 'fullscreen', 'settings'],
+                autoplay: true,
+                muted: true,
+                hideControls: true,
+                resetOnEnd: true
             };
 
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(source);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
                     const player = new Plyr(video, defaultOptions);
+                    var playPromise = player.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            player.muted = true;
+                            player.play();
+                        });
+                    }
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = source;
                 const player = new Plyr(video, defaultOptions);
+                player.play().catch(() => { player.muted = true; player.play(); });
             }
         });
     </script>
