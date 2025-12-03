@@ -1,1 +1,0 @@
-# yasinsametkaplan.github.io
