@@ -447,7 +447,7 @@
 
         // Set source
         player.src({
-            src: 'https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8',
+            src: 'https://kaplanhost.com.tr/player_embed.php?url=https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8',
             type: 'application/x-mpegURL'
         });
 
@@ -468,11 +468,12 @@
             console.log('Video error occurred');
             setTimeout(function() {
                 player.src({
-                    src: 'https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8',
+                    src: 'https://kaplanhost.com.tr/player_embed.php?url=https://kaplanyayin78.canadacentral.cloudapp.azure.com/hls/0/stream.m3u8',
                     type: 'application/x-mpegURL'
                 });
             }, 3000);
         });
     </script>
 </body>
+
 </html>
