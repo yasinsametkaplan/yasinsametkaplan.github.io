@@ -18,7 +18,7 @@
             --border-tech: rgba(255, 255, 255, 0.15);
         }
 
-        /* --- CSS SIFIRLAMA --- */
+        /* --- TEMEL AYARLAR --- */
         *:focus, *:focus-visible {
             outline: none !important;
             box-shadow: 0 0 0 2px var(--brand-red) !important;
@@ -58,7 +58,7 @@
             z-index: 1; pointer-events: none;
         }
 
-        /* ANA KAPLAYICI */
+        /* ANA YAPI */
         .wrapper {
             position: relative; z-index: 10;
             height: 100%; width: 100%;
@@ -66,7 +66,6 @@
             padding: 20px; padding-bottom: 60px;
         }
 
-        /* ANA KART */
         .broadcast-card {
             background: var(--glass-panel);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -90,7 +89,7 @@
             border-radius: 0 0 8px 0; opacity: 0.7;
         }
 
-        /* SOL TARAF */
+        /* SOL PANEL */
         .info-panel { text-align: left; }
 
         .logo-area {
@@ -179,7 +178,7 @@
             position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden;
         }
 
-        /* --- PLAYER BAR STİLİ --- */
+        /* PLYR ÖZELLEŞTİRMELERİ */
         .plyr__controls {
             margin: 15px !important;
             border-radius: 8px !important;
@@ -211,7 +210,7 @@
         }
         .channel-watermark span { color: rgba(225, 29, 72, 0.5); }
 
-        /* Teknik Veri */
+        /* TEKNİK İSTATİSTİKLER */
         .tech-stats {
             display: flex; justify-content: space-between;
             margin-top: 10px; font-family: 'Rajdhani', sans-serif;
@@ -223,13 +222,13 @@
         .stat-item i { color: #64748b; }
         .stat-item span { color: #e2e8f0; font-weight: 700; }
         
-        /* Renk Animasyonları */
+        /* Renk & Animasyon */
         .green-light { color: #10b981 !important; text-shadow: 0 0 5px #10b981; }
         .red-light { color: #ef4444 !important; text-shadow: 0 0 5px #ef4444; }
         .blink-anim { animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* ALT TICKER */
+        /* TICKER (ALT KAYAN YAZI) */
         .ticker-wrapper {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 35px;
             background: #000; border-top: 1px solid #333;
@@ -246,7 +245,7 @@
             font-family: 'Inter', sans-serif; white-space: nowrap; overflow: hidden;
         }
 
-        /* POPUP */
+        /* MODAL */
         .modal-content { background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; }
         .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px; }
         .security-field { display: none; }
@@ -407,7 +406,7 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     
     <script>
-        // --- Modal & Captcha İşlemleri ---
+        // --- Modal & Captcha ---
         let n1, n2;
         const modalEl = document.getElementById('contactModal');
         if(modalEl) {
@@ -436,8 +435,9 @@
             e.target.submit();
         }
 
-        // --- YAYIN VE SUNUCU DURUMU GÜNCELLEME ---
+        // --- DURUM GÜNCELLEME SİSTEMİ ---
         function updateStatus(isOnline, type = 'broadcast') {
+            // Yayın Durumu
             if (type === 'broadcast') {
                 const statusText = document.getElementById('status-text');
                 const statusIcon = document.getElementById('status-icon');
@@ -456,15 +456,15 @@
                     }
                 }
             }
-            
+            // Sunucu Durumu (BEYAZ ve AKTİF)
             if (type === 'server') {
                 const srvText = document.getElementById('server-text');
                 const srvIcon = document.getElementById('server-icon');
                 if (srvText && srvIcon) {
                     if (isOnline) {
-                        srvText.innerText = "ONLINE";
-                        srvText.style.color = "#fff"; 
-                        srvIcon.className = "fas fa-server green-light";
+                        srvText.innerText = "AKTİF"; // İstenen: AKTİF
+                        srvText.style.color = "#fff"; // İstenen: BEYAZ
+                        srvIcon.className = "fas fa-server green-light"; 
                     } else {
                         srvText.innerText = "OFFLINE";
                         srvText.style.color = "#ef4444"; 
@@ -474,12 +474,11 @@
             }
         }
 
-        // --- KALİTE ETİKETİ DÜZENLEME (ÖNEMLİ DEĞİŞİKLİK) ---
+        // --- EKRAN ALTI KALİTE ETİKETİ ---
         function updateQualityLabel(height, isAuto) {
             const lbl = document.getElementById('quality-label');
             if (!lbl) return;
 
-            // 0p sorununu çözen kısım: Değer 0 ise veya boşsa sadece AUTO yaz
             if (!height || height === 0) {
                 lbl.innerText = "AUTO";
                 lbl.style.color = "#fbbf24";
@@ -487,19 +486,48 @@
             }
 
             if (isAuto) {
-                // Auto modda gerçek değer varsa parantez içinde göster: AUTO (720p)
                 lbl.innerText = `AUTO (${height}p)`;
                 lbl.style.color = "#fbbf24"; 
             } else {
-                // Manuel modda direkt değeri göster: 720p
                 lbl.innerText = `${height}p`;
                 lbl.style.color = "#fff";
             }
         }
 
-        // --- GELİŞMİŞ VIDEO PLAYER ---
+        // --- GÜVENLİ METİN DEĞİŞTİRME FONKSİYONU ---
+        // Bu fonksiyon sadece YAZI (Text Node) içeriğini değiştirir.
+        // Böylece butonların tıklanabilirliği (Event Listeners) bozulmaz.
+        function safeTextReplace(node) {
+            if (node.nodeType === 3) { // Eğer bu bir yazı düğümüyse (Text Node)
+                if (node.nodeValue.includes('0p')) {
+                    node.nodeValue = node.nodeValue.replace('0p', 'Otomatik');
+                }
+            } else if (node.nodeType === 1) { // Eğer bu bir HTML elemanıysa
+                // Altındaki çocukları tara
+                node.childNodes.forEach(safeTextReplace);
+            }
+        }
+
+        const menuObserver = new MutationObserver((mutations) => {
+            const container = document.querySelector('.plyr__menu__container');
+            if (container) {
+                safeTextReplace(container);
+            }
+        });
+
+        // Sayfa yüklendiğinde gözlemciyi oynatıcıya bağla
+        document.addEventListener('DOMContentLoaded', () => {
+            const playerContainer = document.querySelector('.monitor-panel');
+            if(playerContainer) {
+                menuObserver.observe(playerContainer, { childList: true, subtree: true });
+            }
+        });
+
+
+        // --- PLAYER AYARLARI ---
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('player');
+            // Yeni Link
             const source = 'https://hlsn.eventlive.pro/TEST-GMEDKMDQ.m3u8';
             
             const defaultOptions = {
@@ -513,13 +541,13 @@
                 muted: true,
                 hideControls: true,
                 resetOnEnd: true,
-                quality: { default: 0, options: [0], forced: true, onChange: (e) => updateQuality(e) },
                 i18n: {
                     quality: 'Kalite',
                     speed: 'Hız',
                     disabled: 'Kapalı',
                     enabled: 'Açık',
-                    advertisement: 'Reklam'
+                    advertisement: 'Reklam',
+                    qualityBadge: { 0: 'Otomatik' }
                 }
             };
 
@@ -536,10 +564,6 @@
 
                     const availableQualities = hls.levels.map((l) => l.height);
                     let levels = [...new Set(availableQualities)].sort((a, b) => b - a);
-                    
-                    // Başlangıçta 0p yazmaması için
-                    updateQualityLabel(0, true);
-
                     if (levels.length > 1) { levels.unshift(0); }
 
                     defaultOptions.quality = {
@@ -548,14 +572,11 @@
                         forced: true,
                         onChange: (newQuality) => {
                             if (newQuality === 0) {
-                                hls.currentLevel = -1; // Auto mod
-                                // Auto'ya geçince anlık çözünürlüğü kontrol et
-                                const currentLevelIndex = hls.currentLevel;
-                                if (currentLevelIndex !== -1 && hls.levels[currentLevelIndex]) {
-                                    updateQualityLabel(hls.levels[currentLevelIndex].height, true);
-                                } else {
-                                    updateQualityLabel(0, true);
-                                }
+                                hls.currentLevel = -1; 
+                                setTimeout(() => {
+                                    const lvl = hls.levels[hls.currentLevel];
+                                    updateQualityLabel(lvl ? lvl.height : 0, true);
+                                }, 500);
                             } else {
                                 hls.levels.forEach((level, levelIndex) => {
                                     if (level.height === newQuality) {
@@ -568,16 +589,11 @@
                     };
 
                     const player = new Plyr(video, defaultOptions);
-                    
-                    // Auto-start at highest possible bitrate
-                    hls.startLevel = -1; 
+                    updateQualityLabel(0, true);
 
                     var playPromise = player.play();
                     if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            player.muted = true;
-                            player.play();
-                        });
+                        playPromise.catch(error => { player.muted = true; player.play(); });
                     }
                 });
 
@@ -596,7 +612,7 @@
                     if (data.fatal) {
                         switch (data.type) {
                             case Hls.ErrorTypes.NETWORK_ERROR:
-                                console.error("Bağlantı Hatası");
+                                console.error("Hata");
                                 updateStatus(false, 'broadcast');
                                 updateStatus(false, 'server'); 
                                 hls.startLoad();
@@ -624,8 +640,7 @@
                     updateStatus(false, 'server');
                 });
                 const player = new Plyr(video, defaultOptions);
-                const lbl = document.getElementById('quality-label');
-                if (lbl) lbl.innerText = "AUTO"; 
+                updateQualityLabel(0, true);
                 player.play().catch(() => { player.muted = true; player.play(); });
             } else {
                 updateStatus(false, 'broadcast');
@@ -633,6 +648,5 @@
             }
         });
     </script>
-
 </body>
 </html>
