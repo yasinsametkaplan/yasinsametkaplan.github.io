@@ -330,7 +330,7 @@
                     </div>
                     <div class="stat-item">
                         <i id="server-icon" class="fas fa-server"></i> 
-                        SUNUCU: <span id="server-text">CONNECTING...</span>
+                        SUNUCU: <span id="server-text">BEKLENİYOR...</span>
                     </div>
                     <div class="stat-item"><i class="fas fa-cog"></i> KALİTE: <span id="quality-label">AUTO</span></div>
                 </div>
@@ -451,7 +451,6 @@
                         statusText.style.color = "#ef4444"; 
                         statusIcon.className = "fas fa-ban text-danger";
                         statusIcon.classList.remove('blink-anim');
-                        // Yayın yoksa kalite de yoktur
                         const qLabel = document.getElementById('quality-label');
                         if (qLabel) qLabel.innerText = "-";
                     }
@@ -464,35 +463,35 @@
                 if (srvText && srvIcon) {
                     if (isOnline) {
                         srvText.innerText = "ONLINE";
-                        srvText.style.color = "#10b981"; // Yeşil
+                        srvText.style.color = "#fff"; 
                         srvIcon.className = "fas fa-server green-light";
                     } else {
                         srvText.innerText = "OFFLINE";
-                        srvText.style.color = "#ef4444"; // Kırmızı
+                        srvText.style.color = "#ef4444"; 
                         srvIcon.className = "fas fa-server red-light";
                     }
                 }
             }
         }
 
-        // --- KALİTE ETİKETİ GÜNCELLEME ---
+        // --- KALİTE ETİKETİ DÜZENLEME (ÖNEMLİ DEĞİŞİKLİK) ---
         function updateQualityLabel(height, isAuto) {
             const lbl = document.getElementById('quality-label');
             if (!lbl) return;
 
-            // Veri gelmediyse veya 0 ise
+            // 0p sorununu çözen kısım: Değer 0 ise veya boşsa sadece AUTO yaz
             if (!height || height === 0) {
-                if(isAuto) {
-                     lbl.innerText = "AUTO";
-                     lbl.style.color = "#fbbf24";
-                }
+                lbl.innerText = "AUTO";
+                lbl.style.color = "#fbbf24";
                 return;
             }
 
             if (isAuto) {
+                // Auto modda gerçek değer varsa parantez içinde göster: AUTO (720p)
                 lbl.innerText = `AUTO (${height}p)`;
                 lbl.style.color = "#fbbf24"; 
             } else {
+                // Manuel modda direkt değeri göster: 720p
                 lbl.innerText = `${height}p`;
                 lbl.style.color = "#fff";
             }
@@ -531,13 +530,14 @@
                 hls.loadSource(source);
                 hls.attachMedia(video);
 
-                // 1. MANIFEST OKUNDU -> YAYIN AKTİF, SUNUCU HAZIRLANIYOR
                 hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
                     updateStatus(true, 'broadcast');
-                    updateStatus(true, 'server'); // Manifest geldiyse sunucu cevap veriyordur
+                    updateStatus(true, 'server'); 
 
                     const availableQualities = hls.levels.map((l) => l.height);
                     let levels = [...new Set(availableQualities)].sort((a, b) => b - a);
+                    
+                    // Başlangıçta 0p yazmaması için
                     updateQualityLabel(0, true);
 
                     if (levels.length > 1) { levels.unshift(0); }
@@ -548,7 +548,8 @@
                         forced: true,
                         onChange: (newQuality) => {
                             if (newQuality === 0) {
-                                hls.currentLevel = -1; 
+                                hls.currentLevel = -1; // Auto mod
+                                // Auto'ya geçince anlık çözünürlüğü kontrol et
                                 const currentLevelIndex = hls.currentLevel;
                                 if (currentLevelIndex !== -1 && hls.levels[currentLevelIndex]) {
                                     updateQualityLabel(hls.levels[currentLevelIndex].height, true);
@@ -567,6 +568,10 @@
                     };
 
                     const player = new Plyr(video, defaultOptions);
+                    
+                    // Auto-start at highest possible bitrate
+                    hls.startLevel = -1; 
+
                     var playPromise = player.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(error => {
@@ -576,12 +581,10 @@
                     }
                 });
 
-                // 2. PARÇA YÜKLENDİ -> SUNUCU KESİN ONLINE
                 hls.on(Hls.Events.FRAG_LOADED, function() {
                     updateStatus(true, 'server');
                 });
 
-                // 3. KALİTE DEĞİŞİMİ
                 hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {
                     const level = hls.levels[data.level];
                     if (level) {
@@ -589,14 +592,13 @@
                     }
                 });
 
-                // 4. HATA YAKALAMA
                 hls.on(Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
                         switch (data.type) {
                             case Hls.ErrorTypes.NETWORK_ERROR:
-                                console.error("Ağ Hatası / Sunucu Erişilemez");
+                                console.error("Bağlantı Hatası");
                                 updateStatus(false, 'broadcast');
-                                updateStatus(false, 'server'); // NETWORK HATASI = SUNUCU OFFLINE
+                                updateStatus(false, 'server'); 
                                 hls.startLoad();
                                 break;
                             case Hls.ErrorTypes.MEDIA_ERROR:
@@ -612,19 +614,15 @@
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // iOS Safari
                 video.src = source;
-                
                 video.addEventListener('loadedmetadata', () => { 
                     updateStatus(true, 'broadcast');
                     updateStatus(true, 'server');
                 });
-                
                 video.addEventListener('error', () => { 
                     updateStatus(false, 'broadcast');
                     updateStatus(false, 'server');
                 });
-
                 const player = new Plyr(video, defaultOptions);
                 const lbl = document.getElementById('quality-label');
                 if (lbl) lbl.innerText = "AUTO"; 
